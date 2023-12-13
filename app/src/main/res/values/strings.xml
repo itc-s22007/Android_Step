@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Android_Step</string>
+    <string name="app_name">歩数</string>
+    <string name="to_timer">Timer</string>
+    <string name="to_Map">Map</string>
 </resources>
