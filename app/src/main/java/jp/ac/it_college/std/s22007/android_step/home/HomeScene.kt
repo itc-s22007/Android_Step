@@ -1,5 +1,6 @@
 package jp.ac.it_college.std.s22007.android_step.home
 
+import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,11 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import jp.ac.it_college.std.s22007.android_step.R
@@ -42,6 +46,7 @@ fun HomeScene(
     var currentDate by remember { mutableStateOf(getCurrentDate()) }
     var currentData by remember { mutableStateOf("") }
     val currentLocalTime = remember { mutableStateOf(LocalTime.now()) }
+    val goalSteps = remember { mutableStateOf(5000) }
     LaunchedEffect(Unit) {
         while (true) {
             currentLocalTime.value = LocalTime.now()
@@ -97,11 +102,25 @@ fun HomeScene(
             val progressWidth = 14.dp
             val backGroundWidth = 20.dp
             val startAngle = (circleAngle / 4) + ((circleAngle - angle) / 2)
+
             Canvas(
                 modifier = Modifier
                     .size(400.dp)
                     .padding(20.dp),
                 onDraw = {
+                    val centerX = size.width / 2
+                    val centerx = size.width / 2
+                    val centerY = size.height / 4
+                    val centery = size.height * 8 / 10
+                    val text = "Today's,goal！"
+                    val text2 = "Steps"
+                    val paint = android.graphics.Paint().apply {
+                        color = android.graphics.Color.GRAY
+                        textSize = 100f
+                        textAlign = android.graphics.Paint.Align.CENTER
+                    }
+                    drawContext.canvas.nativeCanvas.drawText(text, centerX, centerY, paint)
+                    drawContext.canvas.nativeCanvas.drawText(text2, centerx, centery, paint)
                     drawArc(
                         color = Color.Black,
                         startAngle = startAngle,
@@ -131,6 +150,7 @@ fun HomeScene(
                     )
                 }
             )
+
 
             Row {
                 Button(onClick = onClickTimerButton, modifier = Modifier.padding(5.dp)
