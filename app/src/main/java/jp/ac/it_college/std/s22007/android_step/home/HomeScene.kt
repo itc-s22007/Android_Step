@@ -1,6 +1,5 @@
 package jp.ac.it_college.std.s22007.android_step.home
 
-import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,17 +20,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import jp.ac.it_college.std.s22007.android_step.R
+import jp.ac.it_college.std.s22007.android_step.sns.shereIntent
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -47,6 +47,7 @@ fun HomeScene(
     var currentData by remember { mutableStateOf("") }
     val currentLocalTime = remember { mutableStateOf(LocalTime.now()) }
     val goalSteps = remember { mutableStateOf(5000) }
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         while (true) {
             currentLocalTime.value = LocalTime.now()
@@ -161,7 +162,9 @@ fun HomeScene(
                 ){
                     Text(text = stringResource(id = R.string.to_Map))
                 }
-                Button(onClick = {}, modifier = Modifier.padding(5.dp)
+                Button(onClick = {
+                    startActivity(context, shereIntent, null)
+                }, modifier = Modifier.padding(5.dp)
                 ){
                     Text("share")
                 }
