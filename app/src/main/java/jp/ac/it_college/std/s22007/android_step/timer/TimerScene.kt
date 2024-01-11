@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import jp.ac.it_college.std.s22007.android_step.home.isButtonEnabled
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
@@ -38,7 +41,7 @@ fun TimerScene(
     var elapsedTime by remember { mutableStateOf(0L) }
     var laps by remember { mutableStateOf(mutableListOf<Long>()) }
 
-    Surface(modifier) {
+    Surface(modifier, color = Color.Black) {
         LaunchedEffect(isRunning) {
             while (true) {
                 if (isRunning) {
@@ -53,13 +56,15 @@ fun TimerScene(
             Button(
                 onClick = onClickHomeButton,
                 modifier = Modifier
-                    .height(48.dp)
-                    .width(148.dp)
+                    .height(70.dp)
+                    .width(50.dp)
+                    .padding(horizontal = 0.dp),
+                colors = ButtonDefaults.buttonColors(Color.Transparent)
             ) {
                 Text(
-                    text = "＜ー",
+                    text = "＜",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 30.sp
                 )
             }
         }
@@ -70,7 +75,9 @@ fun TimerScene(
         ) {
             Text(
                 text = formatTime(elapsedTime),
-                style = MaterialTheme.typography.displayLarge
+                style = MaterialTheme.typography.displayLarge,
+                color = Color.White,
+                fontSize = 100.sp
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -80,7 +87,9 @@ fun TimerScene(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { isRunning = !isRunning }, modifier = Modifier.padding(5.dp)
+                    onClick = { isRunning = !isRunning }, modifier = Modifier
+                        .padding(5.dp)
+                        .size(90.dp)
                 ) {
                     Text(if (isRunning) "Stop" else "Start")
                 }
@@ -90,19 +99,24 @@ fun TimerScene(
                         elapsedTime = 0L
                         laps.clear()
                     },
-                    modifier = Modifier.padding(5.dp)
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(90.dp)
                 ) {
                     Text("Reset")
                 }
+                Button(
+                    onClick = {
+                        laps.add(elapsedTime)
+                    },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(90.dp)
+                ) {
+                    Text("Rap")
+                }
             }
-            Button(
-                onClick = {
-                    laps.add(elapsedTime)
-                },
-                modifier = Modifier.padding(5.dp)
-            ){
-                Text("Rap")
-            }
+
             if (laps.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(
@@ -110,7 +124,7 @@ fun TimerScene(
                 ) {
                     Text("Lap times:")
                     laps.forEachIndexed { index, lapTime ->
-                        Text("$index: ${formatTime(lapTime)}")
+                        Text("$index: ${formatTime(lapTime)}", color = Color.White)
                     }
                 }
             }
