@@ -6,6 +6,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -69,8 +71,8 @@ fun HomeScene(
     var currentDate by remember { mutableStateOf(getCurrentDate()) }
     var currentData by remember { mutableStateOf("") }
     val currentLocalTime = remember { mutableStateOf(LocalTime.now()) }
-    var goalSteps by remember { mutableIntStateOf(5000) }
-
+    var goalSteps by remember { mutableIntStateOf(0) }
+    var isGoalDialogVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -142,7 +144,7 @@ fun HomeScene(
 
                 Button(
                     onClick = {
-                        showGoalInputDialog { newGoal -> goalSteps = newGoal }
+                              isGoalDialogVisible = true
                     },
                     modifier = Modifier
                         .padding(10.dp)
@@ -156,6 +158,13 @@ fun HomeScene(
                         modifier = Modifier.size(50.dp),
                     )
                 }
+                if (isGoalDialogVisible) {
+                    GoalInputDialog(
+                        onNewGoalSet = { newGoal -> goalSteps = newGoal },
+                        onDismiss = { isGoalDialogVisible = false }
+                    )
+                }
+
             }
             val circleAngle = 360f
             val max = 400f
@@ -307,14 +316,56 @@ fun HomeScene(
     }
 }
 
+@Composable
+fun GoalInputDialog(
+    onNewGoalSet: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var newGoal by remember { mutableStateOf("0") }
 
-
-
-
-fun showGoalInputDialog(onNewGoalSet: (Int) -> Unit) {
-    val newGoal = 10000
-    onNewGoalSet(newGoal)
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Set Goal") },
+        text = {
+            // Use TextField to get numerical input
+            TextField(
+                value = newGoal,
+                onValueChange = {
+                    // Handle value change and ensure it is a valid integer
+                    if (it.isNotEmpty() && it.isDigitsOnly()) {
+                        newGoal = it
+                    }
+                },
+                label = { Text("Enter steps") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                singleLine = true,
+            )
+        },
+        confirmButton = {
+            // Button to confirm the entered goal
+            Button(
+                onClick = {
+                    onNewGoalSet(newGoal.toInt())
+                    // Dismiss the dialog
+                    onDismiss()
+                }
+            ) {
+                Text("Set Goal")
+            }
+        },
+        dismissButton = {
+            // Button to dismiss the dialog
+            Button(
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }
+
 
 @Composable
 fun StepCounterDisplays(steps: MutableState<Int>) {
