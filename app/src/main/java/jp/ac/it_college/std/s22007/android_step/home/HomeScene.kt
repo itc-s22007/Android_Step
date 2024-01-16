@@ -342,11 +342,9 @@ fun GoalInputDialog(
             )
         },
         confirmButton = {
-            // Button to confirm the entered goal
             Button(
                 onClick = {
                     onNewGoalSet(newGoal.toInt())
-                    // Dismiss the dialog
                     onDismiss()
                 }
             ) {
@@ -354,7 +352,6 @@ fun GoalInputDialog(
             }
         },
         dismissButton = {
-            // Button to dismiss the dialog
             Button(
                 onClick = {
                     onDismiss()

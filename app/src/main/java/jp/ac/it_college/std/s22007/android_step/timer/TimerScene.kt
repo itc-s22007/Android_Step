@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,10 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import jp.ac.it_college.std.s22007.android_step.home.isButtonEnabled
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
+
 
 @Composable
 fun TimerScene(
@@ -40,6 +41,7 @@ fun TimerScene(
     var isRunning by remember { mutableStateOf(false) }
     var elapsedTime by remember { mutableStateOf(0L) }
     var laps by remember { mutableStateOf(mutableListOf<Long>()) }
+    var lapList by remember { mutableStateOf(emptyList<Long>()) }
 
     Surface(modifier, color = Color.Black) {
         LaunchedEffect(isRunning) {
@@ -79,9 +81,7 @@ fun TimerScene(
                 color = Color.White,
                 fontSize = 100.sp
             )
-
             Spacer(modifier = Modifier.height(20.dp))
-
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -116,7 +116,6 @@ fun TimerScene(
                     Text("Rap")
                 }
             }
-
             if (laps.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(
@@ -128,7 +127,14 @@ fun TimerScene(
                     }
                 }
             }
-
+            if (lapList.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                LazyColumn{
+                    items(lapList.size) { index ->
+                        Text("$index: ${formatTime(lapList[index])}", color = Color.White)
+                    }
+                }
+            }
             LaunchedEffect(Unit){
                 while (true){
                     delay(1000)
