@@ -4,6 +4,18 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 
 
@@ -18,9 +30,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-
 
 //@Composable
 //fun StepCounterDisplays(sensorManager: SensorManager) {
