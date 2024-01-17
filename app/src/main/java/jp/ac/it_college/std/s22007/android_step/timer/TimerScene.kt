@@ -95,7 +95,9 @@ fun TimerScene(
             Spacer(modifier = Modifier.height(20.dp))
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth().padding(20.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
             ) {
                 Button(
                     onClick = { isRunning = !isRunning }, modifier = Modifier
@@ -127,29 +129,38 @@ fun TimerScene(
                     Text("Rap")
                 }
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             val state = rememberScrollState()
             LaunchedEffect(Unit) { state.animateScrollTo(100) }
 
+            Text("LapTime:", color = Color.White, fontSize = 20.sp)
+
+            Spacer(modifier = Modifier.height(30.dp))
             Column(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .background(Color.Black)
                     .size(300.dp)
-                    .padding(horizontal = 100.dp)
+                    .padding(horizontal = 60.dp)
                     .verticalScroll(state)
             ) {
                 repeat(1) {
                     if (laps.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                    ) {
-                        Text("Lap times:")
-                        laps.forEachIndexed { index, lapTime ->
-                            Text("$index: ${formatTime(lapTime)}", color = Color.White)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                        ) {
+                            laps.forEachIndexed { index, lapTime ->
+                                Text(
+                                    "$index: ${formatTime(lapTime)}",
+                                    color = Color.White,
+                                    fontSize = 30.sp,
+                                )
+                            }
                         }
                     }
-                }
                 }
             }
 
