@@ -6,7 +6,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.activity.ComponentActivity
+import android.health.connect.datatypes.StepsCadenceRecord
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -393,6 +392,7 @@ fun StepCounterDisplays(steps: MutableState<Int>) {
         }
     }
 }
+
 
 @Composable
 fun calculateCalories(steps: Int, distanceInMeters: Float): Double {
