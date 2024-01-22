@@ -50,7 +50,6 @@ fun Navigation(
                     },
                 )
             }
-
             composable(Destination.TIMER){
                 TimerScene(
                     modifier = Modifier.fillMaxSize(),

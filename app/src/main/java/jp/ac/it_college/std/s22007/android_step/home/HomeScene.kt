@@ -6,25 +6,23 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.Image
-import android.util.Log
+import android.health.connect.datatypes.StepsCadenceRecord
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,51 +38,45 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import coil.compose.AsyncImage
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import jp.ac.it_college.std.s22007.android_step.R
 import jp.ac.it_college.std.s22007.android_step.sns.shereIntent
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
-
-
 
 @Composable
 fun HomeScene(
     modifier: Modifier = Modifier,
     onClickTimerButton: () -> Unit = {},
-    onClickMapButton: () -> Unit = {}
+    onClickMapButton: () -> Unit = {},
 ) {
     var currentDate by remember { mutableStateOf(getCurrentDate()) }
     var currentData by remember { mutableStateOf("") }
     val currentLocalTime = remember { mutableStateOf(LocalTime.now()) }
-    val goalSteps by remember { mutableStateOf(5000) }
-    val goalSteps = remember { mutableStateOf(5000) }
+    var goalSteps by remember { mutableIntStateOf(0) }
+    var isGoalDialogVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         while (true) {
@@ -92,10 +84,7 @@ fun HomeScene(
             delay(1000)
         }
     }
-
-
-
-    Surface(modifier) {
+    Surface(modifier, color = Color.Black) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -113,64 +102,110 @@ fun HomeScene(
 
                     },
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    enabled = isButtonEnabled(currentDate)
+                    enabled = isButtonEnabled(currentDate),
+                    colors = ButtonDefaults.buttonColors(Transparent)
                 ) {
-                    Text("＜")
+                    Text(
+                        "＜",
+                        fontSize = 30.sp
+                    )
                 }
-
+                    Text(
+                        text = "$currentDate",
+                        fontSize = 40.sp,
+                        modifier = modifier.width(210.dp),
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                    Button(
+                        onClick = {
+                            val nextDate = getNextDate(currentDate)
+                            currentData = fetchDataForDate(nextDate)
+                            currentDate = nextDate
+                        },
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        colors = ButtonDefaults.buttonColors(Transparent)
+                    ) {
+                        Text(
+                            "＞",
+                            fontSize = 30.sp
+                        )
+                    }
+                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.width(90.dp))
                 Text(
-                    text = "$currentDate",
-                    modifier = Modifier.padding(10.dp),
-                    style = MaterialTheme.typography.displaySmall
+                    text = "${currentLocalTime.value.hour}:${currentLocalTime.value.minute.toString().padStart(2, '0')}",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Color.White,
                 )
 
                 Button(
                     onClick = {
-                        val nextDate = getNextDate(currentDate)
-                        currentData = fetchDataForDate(nextDate)
-                        currentDate = nextDate
+                              isGoalDialogVisible = true
                     },
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(60.dp)
+                        .width(10.dp),
+                    colors = ButtonDefaults.buttonColors(Gray)
                 ) {
-                    Text("＞")
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_settings_24),
+                        contentDescription = "Set Goal",
+                        modifier = Modifier.size(50.dp),
+                    )
                 }
+                if (isGoalDialogVisible) {
+                    GoalInputDialog(
+                        onNewGoalSet = { newGoal -> goalSteps = newGoal },
+                        onDismiss = { isGoalDialogVisible = false }
+                    )
+                }
+
             }
-            Text(
-                text = "${currentLocalTime.value.hour}:${currentLocalTime.value.minute}",
-                style = MaterialTheme.typography.displaySmall
-            )
             val circleAngle = 360f
-            val max = 300f
-            val angle = 240f
-            val progress = 200f
+            val max = 400f
+            val angle = 300f
+            val progress = 400f
             val progressWidth = 14.dp
             val backGroundWidth = 20.dp
             val startAngle = (circleAngle / 4) + ((circleAngle - angle) / 2)
-            val stepCount = remember { mutableStateOf(0) }
+            val stepCount = remember { mutableIntStateOf(0) }
 //            StepCounterDisplays(stepCount)
-
             Canvas(
                 modifier = Modifier
-                    .size(400.dp)
-                    .padding(20.dp),
+                    .size(370.dp)
+                    .padding(5.dp),
                 onDraw = {
                     val centerX = size.width / 2
                     val centerx = size.width / 2
                     val centerY = size.height / 4
                     val text = "Today's,goal！"
-                    val text2 = "${stepCount.value} / $goalSteps"
+                    val text2 = "${stepCount.intValue} / $goalSteps"
                     val text3 = "Steps"
                     val paint = Paint().apply {
-                        color = android.graphics.Color.GRAY
+                        color = android.graphics.Color.LTGRAY
                         textSize = 100f
                         textAlign = Paint.Align.CENTER
                     }
-                    drawContext.canvas.nativeCanvas.drawText(text, centerX, centerY, paint)
-                    drawContext.canvas.nativeCanvas.drawText(text2, centerx, centerY + 250, paint)
-                    drawContext.canvas.nativeCanvas.drawText(text3, centerx, centerY + 500, paint)
-
+                    val paint2 = Paint().apply {
+                        color = android.graphics.Color.LTGRAY
+                        textSize = 120f
+                        textAlign = Paint.Align.CENTER
+                    }
+                    drawContext.canvas.nativeCanvas.drawText(text, centerX, centerY + 50, paint)
+                    drawContext.canvas.nativeCanvas.drawText(text2, centerx, centerY + 300, paint2)
+                    drawContext.canvas.nativeCanvas.drawText(text3, centerx, centerY + 550, paint)
+                    drawContext.canvas.nativeCanvas.drawText("${stepCount.intValue} / $goalSteps", centerx, centerY + 300, paint2)
                     drawArc(
-                        color = androidx.compose.ui.graphics.Color.Black,
+                        color = Color.Black,
                         startAngle = startAngle,
                         sweepAngle = angle,
                         useCenter = false,
@@ -181,7 +216,7 @@ fun HomeScene(
                         size = Size(size.width, size.height),
                     )
                     drawArc(
-                        color = androidx.compose.ui.graphics.Color.DarkGray,
+                        color = Color.DarkGray,
                         startAngle = startAngle,
                         sweepAngle = angle,
                         useCenter = false,
@@ -189,7 +224,7 @@ fun HomeScene(
                         size = Size(size.width, size.height)
                     )
                     drawArc(
-                        color = androidx.compose.ui.graphics.Color.Cyan,
+                        color = Color.Cyan,
                         startAngle = startAngle,
                         sweepAngle = angle / max * progress,
                         useCenter = false,
@@ -210,24 +245,139 @@ fun HomeScene(
 
 
             Row {
-                Button(onClick = onClickTimerButton, modifier = Modifier.padding(5.dp)
+                Text(
+                    text = "${stepCount.intValue}",
+                    fontSize = 40.sp,
+                    modifier = modifier
+                        .width(120.dp)
+                        .padding(10.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                )
+                val steps = stepCount.intValue
+                val distanceInMeters = 0f
+                val burnedCalories = calculateCalories(steps, distanceInMeters).toInt()
+                Text(
+                    text = "$burnedCalories",
+                    fontSize = 40.sp,
+                    modifier = modifier
+                        .width(120.dp)
+                        .padding(10.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.White
+                )
+            }
+            Row {
+                Text(text = "Km",
+                    fontSize = 30.sp,
+                    modifier = modifier.width(120.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.White
+                )
+                Text(text = "Kcal",
+                    fontSize = 30.sp,
+                    modifier = modifier.width(120.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.White
+                )
+            }
+
+            Row (
+                modifier = modifier.padding(30.dp),
+                horizontalArrangement = Arrangement.Center,
+            ){
+                Button(onClick = onClickTimerButton, modifier = Modifier
+                    .padding(5.dp)
+                    .size(90.dp),
+//                    colors = ButtonDefaults.buttonColors(White)
+                    colors = ButtonDefaults.buttonColors(White)
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.taimer),
+                        contentDescription = "",
+                        modifier = Modifier.fillMaxSize(),
+                    )
                     Text(text = stringResource(id = R.string.to_timer))
                 }
-                Button(onClick = onClickMapButton, modifier = Modifier.padding(5.dp)
+                Button(onClick = onClickMapButton, modifier = Modifier
+                    .padding(5.dp)
+                    .size(90.dp),
+//                    colors = ButtonDefaults.buttonColors(White)
+                    colors = ButtonDefaults.buttonColors(White)
                 ){
-                    Text(text = stringResource(id = R.string.to_Map))
+                    Image(
+                        painter = painterResource(id = R.drawable.map1),
+                        contentDescription = "",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                   Text(text = stringResource(id = R.string.to_Map))
                 }
-                Button(onClick = {
-                    startActivity(context, shereIntent, null)
-                }, modifier = Modifier.padding(5.dp)
+                Button(onClick = {startActivity(context, shereIntent, null)}, modifier = Modifier
+                    .padding(5.dp)
+                    .size(90.dp),
+//                    colors = ButtonDefaults.buttonColors(White)
+                    colors = ButtonDefaults.buttonColors(White)
                 ){
-                    Text("share")
+                    Image(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = "",
+                        modifier = Modifier.fillMaxSize()
+                    )
+//                    Text("share", fontSize = 16.sp)
                 }
             }
         }
     }
 }
+
+@Composable
+fun GoalInputDialog(
+    onNewGoalSet: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var newGoal by remember { mutableStateOf("0") }
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Set Goal") },
+        text = {
+            // Use TextField to get numerical input
+            TextField(
+                value = newGoal,
+                onValueChange = {
+                    // Handle value change and ensure it is a valid integer
+                    if (it.isNotEmpty() && it.isDigitsOnly()) {
+                        newGoal = it
+                    }
+                },
+                label = { Text("Enter steps") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                singleLine = true,
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onNewGoalSet(newGoal.toInt())
+                    onDismiss()
+                }
+            ) {
+                Text("Set Goal")
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+
 @Composable
 fun StepCounterDisplays(steps: MutableState<Int>) {
     val sensorManager =
@@ -260,11 +410,19 @@ fun StepCounterDisplays(steps: MutableState<Int>) {
 }
 
 
+@Composable
+fun calculateCalories(steps: Int, distanceInMeters: Float): Double {
+    val caloriesPerStep = 0.05
+    val caloriesFromDistance = distanceInMeters * 0.1
+    return (steps * caloriesPerStep) + caloriesFromDistance
+}
 
+@Composable
 fun isButtonEnabled(currentDate: LocalDate): Boolean {
     val sevenDaysAgo = LocalDate.now().minusDays(7)
     return currentDate > sevenDaysAgo
 }
+
 fun fetchDataForDate(date: LocalDate): String {
     return "データ: $date"
 }
