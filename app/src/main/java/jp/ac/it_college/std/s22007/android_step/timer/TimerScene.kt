@@ -1,5 +1,6 @@
 package jp.ac.it_college.std.s22007.android_step.timer
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,15 +37,16 @@ import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun TimerScene(
     modifier: Modifier,
     onClickHomeButton: () -> Unit = {}
 ) {
     var isRunning by remember { mutableStateOf(false) }
-    var elapsedTime by remember { mutableStateOf(0L) }
-    var laps by remember { mutableStateOf(mutableListOf<Long>()) }
-    var lapList by remember { mutableStateOf(emptyList<Long>()) }
+    var elapsedTime by remember { mutableLongStateOf(0L) }
+    val laps by remember { mutableStateOf(mutableListOf<Long>()) }
+    val lapList by remember { mutableStateOf(emptyList<Long>()) }
 
     Surface(modifier, color = Color.Black) {
         LaunchedEffect(isRunning) {

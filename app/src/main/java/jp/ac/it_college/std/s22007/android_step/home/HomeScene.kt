@@ -55,7 +55,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
+import coil.compose.AsyncImage
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat.startActivity
 import jp.ac.it_college.std.s22007.android_step.R
+import jp.ac.it_college.std.s22007.android_step.sns.shereIntent
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -72,7 +77,7 @@ fun HomeScene(
     val currentLocalTime = remember { mutableStateOf(LocalTime.now()) }
     var goalSteps by remember { mutableIntStateOf(0) }
     var isGoalDialogVisible by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         while (true) {
             currentLocalTime.value = LocalTime.now()
@@ -229,6 +234,16 @@ fun HomeScene(
                 }
             )
 
+//            Button(
+//                onClick = {
+//                    modifier.width(20.dp)
+//                },
+//                modifier = Modifier.padding(20.dp)
+//            ) {
+//                Text(text = "設定")
+//            }
+
+
             Row {
                 Text(
                     text = "${stepCount.intValue}",
@@ -297,7 +312,7 @@ fun HomeScene(
                     )
                    Text(text = stringResource(id = R.string.to_Map))
                 }
-                Button(onClick = {}, modifier = Modifier
+                Button(onClick = {startActivity(context, shereIntent, null)}, modifier = Modifier
                     .padding(5.dp)
                     .size(90.dp),
 //                    colors = ButtonDefaults.buttonColors(White)
@@ -365,7 +380,8 @@ fun GoalInputDialog(
 
 @Composable
 fun StepCounterDisplays(steps: MutableState<Int>) {
-    val sensorManager = LocalContext.current.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val sensorManager =
+        LocalContext.current.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     DisposableEffect(sensorManager) {
         val sensorEventListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent?) {
@@ -423,7 +439,6 @@ fun getNextDate(currentDate: LocalDate): LocalDate {
     val tomorrow = LocalDate.now().plusDays(0)
     return if (currentDate >= LocalDate.now()) tomorrow else currentDate.plusDays(1)
 }
-
 
 @Preview
 @Composable
