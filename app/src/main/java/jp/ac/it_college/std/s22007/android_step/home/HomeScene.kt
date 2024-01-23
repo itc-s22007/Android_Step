@@ -6,7 +6,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.health.connect.datatypes.StepsCadenceRecord
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -55,9 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
-import coil.compose.AsyncImage
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat.startActivity
 import jp.ac.it_college.std.s22007.android_step.R
 import jp.ac.it_college.std.s22007.android_step.sns.shereIntent
@@ -145,7 +141,6 @@ fun HomeScene(
                     style = MaterialTheme.typography.displaySmall,
                     color = Color.White,
                 )
-
                 Button(
                     onClick = {
                               isGoalDialogVisible = true
@@ -168,7 +163,6 @@ fun HomeScene(
                         onDismiss = { isGoalDialogVisible = false }
                     )
                 }
-
             }
             val circleAngle = 360f
             val max = 400f
@@ -233,17 +227,6 @@ fun HomeScene(
                     )
                 }
             )
-
-//            Button(
-//                onClick = {
-//                    modifier.width(20.dp)
-//                },
-//                modifier = Modifier.padding(20.dp)
-//            ) {
-//                Text(text = "設定")
-//            }
-
-
             Row {
                 Text(
                     text = "${stepCount.intValue}",
@@ -281,7 +264,6 @@ fun HomeScene(
                     color = Color.White
                 )
             }
-
             Row (
                 modifier = modifier.padding(30.dp),
                 horizontalArrangement = Arrangement.Center,
@@ -289,7 +271,6 @@ fun HomeScene(
                 Button(onClick = onClickTimerButton, modifier = Modifier
                     .padding(5.dp)
                     .size(90.dp),
-//                    colors = ButtonDefaults.buttonColors(White)
                     colors = ButtonDefaults.buttonColors(White)
                 ) {
                     Image(
@@ -302,7 +283,6 @@ fun HomeScene(
                 Button(onClick = onClickMapButton, modifier = Modifier
                     .padding(5.dp)
                     .size(90.dp),
-//                    colors = ButtonDefaults.buttonColors(White)
                     colors = ButtonDefaults.buttonColors(White)
                 ){
                     Image(
@@ -312,10 +292,11 @@ fun HomeScene(
                     )
                    Text(text = stringResource(id = R.string.to_Map))
                 }
-                Button(onClick = {startActivity(context, shereIntent, null)}, modifier = Modifier
-                    .padding(5.dp)
-                    .size(90.dp),
-//                    colors = ButtonDefaults.buttonColors(White)
+                Button(
+                    onClick = { startActivity(context, shereIntent, null) },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(90.dp),
                     colors = ButtonDefaults.buttonColors(White)
                 ){
                     Image(
@@ -323,7 +304,6 @@ fun HomeScene(
                         contentDescription = "",
                         modifier = Modifier.fillMaxSize()
                     )
-//                    Text("share", fontSize = 16.sp)
                 }
             }
         }
@@ -341,11 +321,9 @@ fun GoalInputDialog(
         onDismissRequest = { onDismiss() },
         title = { Text("Set Goal") },
         text = {
-            // Use TextField to get numerical input
             TextField(
                 value = newGoal,
                 onValueChange = {
-                    // Handle value change and ensure it is a valid integer
                     if (it.isNotEmpty() && it.isDigitsOnly()) {
                         newGoal = it
                     }
@@ -392,17 +370,14 @@ fun StepCounterDisplays(steps: MutableState<Int>) {
                     }
                 }
             }
-
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
-
         val stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         sensorManager.registerListener(
             sensorEventListener,
             stepCounterSensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
-
         onDispose {
             sensorManager.unregisterListener(sensorEventListener)
         }

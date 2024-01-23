@@ -34,7 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 @SuppressLint("MutableCollectionMutableState")
@@ -53,7 +55,7 @@ fun TimerScene(
             while (true) {
                 if (isRunning) {
                     delay(10)
-                    elapsedTime += 10
+                    elapsedTime += 10L
                 } else {
                     break
                 }
@@ -102,9 +104,10 @@ fun TimerScene(
                 }
                 Button(
                     onClick = {
-                        isRunning = false
-                        elapsedTime = 0L
-                        laps.clear()
+                        if (!isRunning) {
+                            elapsedTime = 0
+                            laps.clear()
+                        }
                     },
                     modifier = Modifier
                         .padding(5.dp)
@@ -114,7 +117,9 @@ fun TimerScene(
                 }
                 Button(
                     onClick = {
-                        laps.add(elapsedTime)
+                        if (isRunning) {
+                            laps.add(elapsedTime)
+                        }
                     },
                     modifier = Modifier
                         .padding(5.dp)
@@ -176,10 +181,6 @@ fun TimerScene(
         }
     }
 }
-
-
-
-
 
 @Composable
 fun formatTime(millis: Long): String {
