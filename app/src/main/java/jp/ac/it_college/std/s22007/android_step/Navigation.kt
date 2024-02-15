@@ -21,9 +21,7 @@ import androidx.navigation.NavViewModelStoreProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import jp.ac.it_college.std.s22007.android_step.history.Stephistory
 import jp.ac.it_college.std.s22007.android_step.home.HomeScene
-import jp.ac.it_college.std.s22007.android_step.model.StepViewModel
 import jp.ac.it_college.std.s22007.android_step.stopwatch.StopWatchScene
 import jp.ac.it_college.std.s22007.android_step.timer.TimerScene
 import java.time.LocalTime
@@ -31,7 +29,6 @@ import java.time.LocalTime
 object Destination {
     const val HOME = "home"
     const val STOPWATCH = "stopwatch"
-    const val STEPHIS = "history"
     const val TIMER = "timer"
 }
 
@@ -63,9 +60,6 @@ fun Navigation(
                     onClickTimerButton = {
                         navController.navigate(Destination.TIMER)
                     },
-                    onClickStephisButton = {
-                        navController.navigate(Destination.STEPHIS)
-                    },
                 )
             }
             composable(Destination.TIMER){
@@ -87,14 +81,6 @@ fun Navigation(
                     }
                 )
             }
-            composable(Destination.STEPHIS){
-                Stephistory(
-                    modifier = Modifier.fillMaxSize(),
-                ){
-                    navController.navigate(Destination.HOME)
-                }
-            }
-
         }
     }
 }

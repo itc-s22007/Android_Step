@@ -1,5 +1,7 @@
 package jp.ac.it_college.std.s22007.android_step.timer
 
+
+
 import android.media.MediaPlayer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
 import java.time.Duration
+
 
 @Composable
 fun TimerScene(
@@ -53,6 +57,7 @@ fun TimerScene(
     val minutesTextFieldState = remember { mutableStateOf(TextFieldValue("")) }
     val secondsTextFieldState = remember { mutableStateOf(TextFieldValue("")) }
     val savedTimes = remember { mutableStateOf(listOf<Pair<Int, Int>>()) }
+
 
     Surface(modifier, color = Color.Black) {
         Column {
@@ -96,7 +101,6 @@ fun TimerScene(
                     label = { Text("Minutes") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-//                        imeAction = ImeAction.Done,
                     ),
                     textStyle = androidx.compose.ui.text.TextStyle(color = Color.White),
                     modifier = Modifier
@@ -139,11 +143,9 @@ fun TimerScene(
                 Button(
                     onClick = {
                         if (isTimerRunning) {
-                            // タイマーが動作中の場合はタイマーをリセットする
                             countDownDuration = Duration.ZERO
-                            isTimerRunning = false // タイマーが停止状態にする
+                            isTimerRunning = false
                         } else {
-                            // タイマーが停止している場合は保存した時間をリセットする
                             savedTimes.value = emptyList()
                         }
                     },
@@ -160,7 +162,7 @@ fun TimerScene(
                     colors = ButtonDefaults.buttonColors(Color.Gray),
                     enabled = savedTimes.value.isNotEmpty()
                 ) {
-                    Text(if (isTimerRunning) "ストップ" else "開始", color = Color.White)
+                    Text(if (isTimerRunning) "停止" else "開始", color = Color.White)
                 }
                 LaunchedEffect(isTimerRunning) {
                     if (isTimerRunning) {
