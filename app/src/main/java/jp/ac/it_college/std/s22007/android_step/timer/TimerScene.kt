@@ -43,7 +43,7 @@ import java.time.Duration
 @Composable
 fun TimerScene(
     modifier: Modifier,
-    onClickStopButton: () -> Unit = {}
+    onClickHomeButton: () -> Unit = {}
 ) {
     var selectedMinutes by remember { mutableStateOf(0) }
     var selectedSeconds by remember { mutableStateOf(0) }
@@ -57,7 +57,7 @@ fun TimerScene(
     Surface(modifier, color = Color.Black) {
         Column {
             Button(
-                onClick = onClickStopButton,
+                onClick = onClickHomeButton,
                 colors = ButtonDefaults.buttonColors(Color.Transparent),
                 modifier = Modifier
             ) {
@@ -83,7 +83,9 @@ fun TimerScene(
                 fontWeight = FontWeight.Medium,
                 fontSize = 90.sp
             )
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OutlinedTextField(
                     value = minutesTextFieldState.value,
                     onValueChange = {
@@ -94,12 +96,7 @@ fun TimerScene(
                     label = { Text("Minutes") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-
-                        }
+//                        imeAction = ImeAction.Done,
                     ),
                     textStyle = androidx.compose.ui.text.TextStyle(color = Color.White),
                     modifier = Modifier

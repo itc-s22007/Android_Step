@@ -77,23 +77,6 @@ fun StopWatchScene(
                     color = Color.White
                 )
             }
-            Button(
-                onClick = {
-                    onClickTimerButton()
-                },
-                modifier = Modifier
-                    .padding(3.dp)
-                    .size(60.dp)
-                    .width(10.dp)
-                    .align(Alignment.End),
-                colors = ButtonDefaults.buttonColors(Color.Gray)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.taimer),
-                    contentDescription = "Set Goal",
-                    modifier = Modifier.size(50.dp),
-                )
-            }
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
