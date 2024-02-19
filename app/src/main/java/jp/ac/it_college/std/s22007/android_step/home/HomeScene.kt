@@ -1,14 +1,11 @@
 package jp.ac.it_college.std.s22007.android_step.home
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.location.LocationRequest
-import android.os.Looper
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,19 +14,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,13 +35,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -64,14 +55,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.core.content.ContextCompat.startActivity
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import jp.ac.it_college.std.s22007.android_step.R
 import jp.ac.it_college.std.s22007.android_step.sns.shereIntent
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -95,17 +82,17 @@ fun HomeScene(
         currentDate = today
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentLocalTime.value = LocalTime.now()
-            delay(1000)
+        LaunchedEffect(Unit) {
+            while (true) {
+                currentLocalTime.value = LocalTime.now()
+                delay(1000)
+            }
         }
-    }
     Surface(modifier, color = Color.Black) {
         Column(
             modifier = Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -142,7 +129,7 @@ fun HomeScene(
                 }
                 Spacer(modifier = Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.padding(5.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
             val circleAngle = 360f
             val max = 400f
             val angle = 400f
@@ -209,28 +196,7 @@ fun HomeScene(
                     )
                 }
             )
-            Spacer(modifier = Modifier.height(5.dp))
-//            Row {
-//                Text(
-//                    text = calculateDistanceFromStepsAndHeight(stepCount.value, 175).toString(),
-//                    fontSize = 30.sp,
-//                    modifier = modifier
-//                        .width(120.dp),
-//                    textAlign = TextAlign.Center,
-//                    color = White,
-//                )
-//                val steps = stepCount.value
-//                val distanceInMeters = 0f
-//                val burnedCalories = calculateCalories(steps, distanceInMeters).toInt()
-//                Text(
-//                    text = "$burnedCalories",
-//                    fontSize = 30.sp,
-//                    modifier = modifier
-//                        .width(120.dp),
-//                    textAlign = TextAlign.Center,
-//                    color = White
-//                )
-//            }
+            Spacer(modifier = Modifier.padding(10.dp))
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth(),
@@ -396,10 +362,7 @@ fun GoalInputDialog(
 }
 
 fun calculateDistanceFromStepsAndHeight(steps: Int, heightInCm: Int): Float {
-    // 一歩の平均距離（メートル単位）を身長に基づいて計算する
-    // 一般的な推定値は、身長の0.415倍ですが、これは個々の人によって異なります
-    val averageStepLengthInMeters = heightInCm * 0.415 / 100 // センチメートルをメートルに変換
-    // 計算した平均一歩の距離と歩数から、歩行距離を計算する
+    val averageStepLengthInMeters = heightInCm * 0.415 / 100
     return steps * averageStepLengthInMeters.toFloat()
 }
 
