@@ -1,17 +1,20 @@
 package jp.ac.it_college.std.s22007.android_step
-import android.content.Context
-import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import com.google.firebase.Firebase
+import com.google.firebase.initialize
+import jp.ac.it_college.std.s22007.android_step.home.calculateDistanceFromStepsAndHeight
 import jp.ac.it_college.std.s22007.android_step.ui.theme.Android_StepTheme
+
+
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
             Android_StepTheme {
                 Navigation()
             }
@@ -21,10 +24,20 @@ class MainActivity : ComponentActivity() {
 
 
 
+//@Composable
+//fun SimpleOutlinedTextFieldSample() {
+//    var text by remember { mutableStateOf("") }
+//
+//    OutlinedTextField(
+//        value = text,
+//        onValueChange = { text = it },
+//        label = { Text("Label") }
+//    )
+//}
 
 //@Composable
 //fun StepCounterDisplays(sensorManager: SensorManager) {
-//    var stepCount by remember { mutableStateOf(0) }
+//    var stepCount by remember { mutableIntStateOf(0) }
 //
 //    DisposableEffect(sensorManager) {
 //        val sensorEventListener = object : SensorEventListener {
