@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jp.ac.it_college.std.s22007.android_step.home.HomeScene
+import jp.ac.it_college.std.s22007.android_step.map.Map
 import jp.ac.it_college.std.s22007.android_step.stopwatch.StopWatchScene
 import jp.ac.it_college.std.s22007.android_step.timer.TimerScene
 import java.time.LocalTime
@@ -30,6 +31,7 @@ object Destination {
     const val HOME = "home"
     const val STOPWATCH = "stopwatch"
     const val TIMER = "timer"
+    const val MAP = "map"
 }
 
 
@@ -60,6 +62,9 @@ fun Navigation(
                     onClickTimerButton = {
                         navController.navigate(Destination.TIMER)
                     },
+                    onClickMapButton = {
+                        navController.navigate(Destination.MAP)
+                    }
                 )
             }
             composable(Destination.TIMER){
@@ -80,6 +85,10 @@ fun Navigation(
                         navController.navigate(Destination.TIMER)
                     }
                 )
+            }
+
+            composable(Destination.MAP){
+                Map()
             }
         }
     }

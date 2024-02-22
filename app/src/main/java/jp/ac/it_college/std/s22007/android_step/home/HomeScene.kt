@@ -26,19 +26,22 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.StrokeCap
@@ -224,6 +227,8 @@ fun HomeScene(
             }
 
             Row {
+                Button(
+                    onClick = onClickTimerButton, modifier = Modifier.padding(5.dp)
                 Text(
                     text = "Km",
                     fontSize = 30.sp,
@@ -255,6 +260,7 @@ fun HomeScene(
                     )
                     Text(text = stringResource(id = R.string.to_timer))
                 }
+                
                 Button(onClick = onClickMapButton, modifier = Modifier
                     .padding(5.dp)
                     .size(90.dp),
@@ -398,7 +404,6 @@ fun StepCounterDisplays(
         }
     }
 }
-
 
 
 @Composable
